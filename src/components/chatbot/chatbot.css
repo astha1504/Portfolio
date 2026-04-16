@@ -1,0 +1,15 @@
+/* chatbot/chatbot.css */
+.chatbot-container {
+  animation: slideIn 0.4s ease-in-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

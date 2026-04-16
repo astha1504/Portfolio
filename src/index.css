@@ -1,0 +1,47 @@
+@import "tailwindcss";
+@import "remixicon/fonts/remixicon.css";
+
+@font-face {
+  font-family: "pricedown";
+  src: url("./pricedown.otf");
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  font-family: "pricedown";
+}
+
+/* Typing animation for "Hey I'm Astha" */
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.typing-text {
+  overflow: hidden;
+  border-right: 0.15em solid white;
+  white-space: nowrap;
+  width: 0;
+  animation: typing 3s steps(20, end) forwards;
+}
+
+.cursor {
+  animation: blink 0.7s infinite;
+}
+
+
