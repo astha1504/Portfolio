@@ -46,11 +46,11 @@ export default function Resume() {
 
   return (
     <section className="bg-gray-950 text-white px-6 md:px-16 py-20 overflow-hidden relative" id="resume">
-        {/* Decorative background elements for visual interest */}
-        <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-            <div className="absolute w-64 h-64 bg-yellow-600 rounded-full blur-3xl opacity-20 -top-20 -left-20 animate-pulse-slow"></div>
-            <div className="absolute w-80 h-80 bg-fuchsia-600 rounded-full blur-3xl opacity-15 bottom-0 right-0 animate-pulse-slow delay-1000"></div>
-        </div>
+      {/* Decorative background elements for visual interest */}
+      <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+        <div className="absolute w-64 h-64 bg-yellow-600 rounded-full blur-3xl opacity-20 -top-20 -left-20 animate-pulse-slow"></div>
+        <div className="absolute w-80 h-80 bg-fuchsia-600 rounded-full blur-3xl opacity-15 bottom-0 right-0 animate-pulse-slow delay-1000"></div>
+      </div>
 
       <div className="resume-section-container relative z-10"> {/* Added for overall section animation */}
         {/* Heading */}
@@ -94,7 +94,7 @@ export default function Resume() {
               <motion.a
                 whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(252,211,38,0.7)" }}
                 whileTap={{ scale: 0.95 }}
-                href="public\Astha_Singh_Resume.pdf" // Ensure this path is correct relative to public/
+                href="public\Astha_Singh_Resume_AI.pdf" // Ensure this path is correct relative to public/
                 download="Astha_Singh_Resume.pdf" // Better filename for download
                 onClick={handleDownload}
                 className="inline-flex items-center gap-3 text-black bg-yellow-400 hover:bg-yellow-500 transition px-7 py-3 rounded-lg text-lg font-bold shadow-lg group
@@ -111,14 +111,14 @@ export default function Resume() {
                   }}
                   className="text-2xl"
                 >
-                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 21L4.5 13.5H9V3h6v10.5h4.5L12 21zM5.121 13.5l6.364 6.364L18.879 13.5H16.5V3h-9v10.5H5.121z"/></svg>
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 21L4.5 13.5H9V3h6v10.5h4.5L12 21zM5.121 13.5l6.364 6.364L18.879 13.5H16.5V3h-9v10.5H5.121z" /></svg>
                 </motion.span>
               </motion.a>
 
               <motion.a
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                href="https://drive.google.com/file/d/1eWj6XJ4TBZeN6h5hhfFf4b7qKvwoMAzz/view?usp=drive_link" // Replace with your actual public Google Drive link
+                href="https://drive.google.com/file/d/1xpx4AnlctTkG4t-rnUlIVmC8iNuhDBsV/view?usp=sharing" // Replace with your actual public Google Drive link
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-7 py-3 border border-yellow-400 text-yellow-400 hover:bg-yellow-500 hover:text-black rounded-lg transition text-lg font-bold
@@ -135,13 +135,13 @@ export default function Resume() {
           <motion.div
             className="resume-right flex justify-center p-4 md:p-0"
           >
-  <img
-    src="/resumee.png" // Make sure this image is in your /public folder
-    alt="Resume Preview"
-    loading="lazy"
-    className="max-w-full max-h-[500px] md:max-h-[600px] object-contain rounded-xl"
-  />
-</motion.div>
+            <img
+              src="/resumee.png" // Make sure this image is in your /public folder
+              alt="Resume Preview"
+              loading="lazy"
+              className="max-w-full max-h-[500px] md:max-h-[600px] object-contain rounded-xl"
+            />
+          </motion.div>
 
         </div>
       </div>

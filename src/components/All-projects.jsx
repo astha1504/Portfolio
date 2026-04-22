@@ -1,123 +1,237 @@
-import React, { useState, useCallback, useEffect } from "react";
-import { FaGithub, FaExternalLinkAlt, FaTimes, FaBrain, FaChartLine, FaGlobe, FaPlay, FaArrowLeft } from "react-icons/fa";
+import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import { FaGithub, FaExternalLinkAlt, FaTimes, FaBrain, FaChartLine, FaGlobe, FaArrowLeft, FaEye, FaCheckCircle, FaClock, FaCode, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import "./All-projects.css";
+
+// Placeholder SVG for missing images - generates a colored gradient with text
+const generatePlaceholder = (title, category) => {
+  const colors = {
+    ai: ['#a855f7', '#7c3aed'],
+    ml: ['#3b82f6', '#2563eb'],
+    mern: ['#22c55e', '#16a34a']
+  };
+  const [color1, color2] = colors[category] || ['#6b7280', '#4b5563'];
+  return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='${color1.replace('#', '%23')}'/%3E%3Cstop offset='100%25' stop-color='${color2.replace('#', '%23')}'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='300' fill='url(%23g)'/%3E%3Ctext x='200' y='150' font-family='Inter, sans-serif' font-size='16' fill='white' text-anchor='middle' dominant-baseline='middle' opacity='0.9'%3E${encodeURIComponent(title)}%3C/text%3E%3C/svg%3E`;
+};
 
 export default function AllProjects({ goBack }) {
   const [selectedProject, setSelectedProject] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [thumbnailRotate, setThumbnailRotate] = useState({});
+  const [visibleCards, setVisibleCards] = useState({});
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [lightboxImages, setLightboxImages] = useState([]);
+  const [imageErrors, setImageErrors] = useState({});
+  const cardRefs = useRef({});
+  const observerRef = useRef(null);
+  const hasAnimated = useRef({});
 
-  // Projects data
-  const projects = {
+  // Projects data - now with category info for placeholders
+  const projects = useMemo(() => ({
     ai: [
       {
         id: 1,
         title: "VeriCreate",
+        category: "ai",
         shortDesc: "AI + Blockchain content verification platform",
         description: "VeriCreate is a full-stack AI platform for generating and verifying digital content authenticity using AI models and cryptographic hashing. It enables AI text/image generation, SHA-256 based verification, and tracks content integrity with a modern dashboard.",
-        tech: ["React.js", "Node.js", "Express.js", "MongoDB", "Solidity", "Web3.js", "Ethereum", "OpenAI API", "Gemini API", "Stable Diffusion", "SHA-256"],
+        tech: ["React.js", "Node.js", "Express.js", "MongoDB", "Solidity", "Web3.js", "OpenAI API"],
         github: "https://github.com/astha1504/VeriCreate",
         live: "https://kode-kalesh-2025.vercel.app/",
-        video: "https://drive.google.com/file/d/1IeFG31sHObwf3SLRIY5s9xh_CHfZ9eJe/view?usp=sharing",
-        thumbnail: "/vericreate.png",
+        thumbnail: "/verithumb.png",
+        screenshots: [
+          "/veri1.png",
+          "/veri2.png",
+          "/veri3.png",
+          "/veri4.png",
+          "/veri5.png",
+        ],
+        status: "hosted",
+        statusLabel: "Live",
         impact: "AI + Blockchain system ensuring content authenticity, tamper detection, and secure digital verification."
       },
       {
         id: 2,
         title: "Portfolio Website",
+        category: "ai",
         shortDesc: "Interactive portfolio with AI chatbot",
-        description: "A highly interactive developer portfolio built to showcase projects through storytelling, animation, and immersive UI/UX design. Features fully animated UI with GSAP ScrollTrigger, smooth transitions using Framer Motion, interactive AI chatbot for personalized user interaction, dynamic project showcase with modern UI cards, responsive across all devices, and VanillaTilt-based 3D hover effects.",
-        tech: ["React.js", "Tailwind CSS", "GSAP", "Framer Motion", "VanillaTilt.js", "JavaScript", "AI Chatbot"],
-        github: "https://github.com/yourusername/portfolio",
-        live: "https://portfolio.demo.com",
-        video: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-        thumbnail: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=240&fit=crop",
-        impact: "Improves visitor engagement through scroll-based storytelling UX, optimized for mobile-first responsive performance, reduces bounce rate using interactive animations, designed to act as a live developer identity system"
+        description: "A personal developer portfolio built with React.js and Vite, featuring an integrated AI chatbot, animated UI components, dark theme, smooth page transitions, and a full project showcase gallery.",
+        tech: ["React.js", "Vite", "Node.js", "Express.js", "Gemini API", "CSS Animations"],
+        github: "https://github.com/astha1504/Portfolio",
+        live: null,
+        thumbnail: "/portfolio.png",
+        screenshots: [
+          "/Screenshots/Screenshot 2025-08-03 181850.png",
+        ],
+        status: "hosted",
+        statusLabel: "Live",
+        impact: "Showcases full-stack and AI skills through a production-quality portfolio."
       },
       {
         id: 3,
-        title: "Cyberbully & Toxic Comment Detector",
+        title: "Cyberbully Detector",
+        category: "ai",
         shortDesc: "AI moderation for toxic content detection",
-        description: "A full-stack AI moderation system that detects toxic, abusive, and harmful content in user-generated text using ML + LLM-based semantic understanding. Features real-time toxic comment classification, ML + NLP pipeline for text preprocessing and prediction, LLM-enhanced semantic toxicity detection, user authentication system, database storage for flagged content, and web-based interface for moderation.",
-        tech: ["MongoDB", "Express.js", "React.js", "Node.js", "Python", "Scikit-learn", "NLP", "LLM APIs"],
-        github: "https://github.com/yourusername/cyberbully-detector",
-        live: "https://cyberbully.demo.com",
-        video: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-        thumbnail: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=400&h=240&fit=crop",
-        impact: "Achieves high accuracy classification (ML + NLP hybrid approach), can process real-time user comments with low latency backend, reduces manual moderation effort by automating toxicity filtering, scalable for social platforms and forums"
+        description: "A full-stack AI moderation system that detects toxic, abusive, and harmful content in user-generated text using ML + LLM-based semantic understanding.",
+        tech: ["MongoDB", "Express.js", "React.js", "Node.js", "Python", "Scikit-learn", "NLP"],
+        github: "https://github.com/astha1504/Cyberbully-and-toxic-comment-detector",
+        live: null,
+        thumbnail: "cyberbully.png",
+        screenshots: [
+          "/Screenshots/Screenshot 2025-08-03 211801.png",
+        ],
+        status: "inprogress",
+        statusLabel: "In Progress",
+        impact: "Achieves high accuracy classification, reduces manual moderation effort."
       },
       {
         id: 4,
-        title: "Elderly Care Assistant App",
+        title: "Elderly Care Assistant",
+        category: "ai",
         shortDesc: "AI-powered healthcare assistant for seniors",
-        description: "An AI-powered healthcare assistant designed to support elderly individuals in managing their daily health, appointments, and medical communication. The system enhances independent living through intelligent automation and contextual AI responses. Features include AI-powered conversational assistant for health-related queries, RAG (Retrieval Augmented Generation) for accurate context-aware responses, user authentication for elderly users and caregivers, health metrics tracking (BP, glucose, reports, etc.), appointment scheduling with automated reminders, and health trend analysis over time.",
-        tech: ["FastAPI", "Python", "LLM APIs", "RAG", "Vector Database", "SQL/NoSQL DB", "REST APIs"],
-        github: "https://github.com/yourusername/elderly-care",
-        live: "https://elderlycare.demo.com",
-        video: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-        thumbnail: "https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?w=400&h=240&fit=crop",
-        impact: "Designed to reduce manual caregiver workload by 60–70%, supports real-time health query resolution using AI, handles structured + unstructured medical data efficiently, scalable API-first architecture for multi-user systems"
+        description: "An AI-powered healthcare assistant designed to support elderly individuals in managing their daily health, appointments, and medical communication.",
+        tech: ["FastAPI", "Python", "LLM APIs", "RAG", "Vector Database", "REST APIs"],
+        github: "https://github.com/astha1504/Elderly-Care-Assistant-App-using-FastAPI",
+        live: null,
+        thumbnail: "elderly.png",
+        screenshots: [
+          "/Screenshots/Screenshot 2025-08-01 135754.png",
+        ],
+        status: "development",
+        statusLabel: "In Development",
+        impact: "Designed to reduce manual caregiver workload by 60-70%."
       }
     ],
     ml: [
       {
         id: 5,
         title: "Invoice Intelligent System",
+        category: "ml",
         shortDesc: "ML-powered invoice processing & fraud detection",
-        description: "An end-to-end machine learning system for invoice processing, fraud detection, and freight cost prediction to automate financial workflows. Features invoice data preprocessing and cleaning pipeline, fraud detection and invoice validation system, freight cost prediction using regression models, modular ML pipeline (train → evaluate → predict), and automated script-based inference system.",
+        description: "An end-to-end machine learning system for invoice processing, fraud detection, and freight cost prediction to automate financial workflows.",
         tech: ["Python", "Machine Learning", "Scikit-learn", "Pandas", "NumPy", "OCR", "NLP"],
-        github: "https://github.com/yourusername/invoice-intelligent",
-        live: "https://invoiceintelligent.demo.com",
-        video: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-        thumbnail: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&h=240&fit=crop",
-        impact: "Reduces manual invoice verification effort by up to 80%, improves decision-making in logistics cost estimation, automates repetitive financial analysis tasks, end-to-end ML pipeline demonstrates production-ready workflow"
+        github: "https://github.com/astha1504/Invoice-Intelligent-System",
+        live: null,
+        thumbnail: "/invoice.png",
+        screenshots: [
+          "/Screenshots/Screenshot 2025-07-25 084647.png",
+        ],
+        status: "development",
+        statusLabel: "In Development",
+        impact: "Reduces manual invoice verification effort by up to 80%."
       },
       {
         id: 6,
-        title: "Fake News Detection System",
+        title: "Fake News Detection",
+        category: "ml",
         shortDesc: "ML + NLP for news authenticity classification",
-        description: "A machine learning-based system that classifies news as real or fake using NLP preprocessing and statistical learning models. Features text preprocessing (tokenization, cleaning, vectorization), ML classification models (Logistic Regression, SVM, etc.), probability-based prediction output, MERN-based web interface for user input, and dataset-based training pipeline.",
+        description: "A machine learning-based system that classifies news as real or fake using NLP preprocessing and statistical learning models.",
         tech: ["MongoDB", "Express.js", "React.js", "Node.js", "Python", "Scikit-learn", "NLP"],
-        github: "https://github.com/yourusername/fake-news-detection",
-        live: "https://fakenews.demo.com",
-        video: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-        thumbnail: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=400&h=240&fit=crop",
-        impact: "Achieves ~70%+ baseline accuracy using classical ML models, helps reduce misinformation through automated detection, scalable pipeline for improved datasets and models, demonstrates practical NLP + ML deployment workflow"
+        github: "https://github.com/astha1504/Fake-News-Recoginization",
+        live: null,
+        thumbnail: "/fakenews.png",
+        screenshots: [
+          "/Screenshots/Screenshot 2025-07-16 220114.png",
+        ],
+        status: "development",
+        statusLabel: "In Development",
+        impact: "Achieves ~70%+ baseline accuracy using classical ML models."
       }
     ],
     mern: [
       {
         id: 7,
         title: "FlowGuard DPI Engine",
+        category: "mern",
         shortDesc: "High-performance packet inspection system",
-        description: "A high-performance Deep Packet Inspection engine designed to analyze, classify, and filter network traffic at packet level. Features packet-level inspection of network traffic, 5-tuple flow tracking (IP, port, protocol), SNI-based application classification (HTTPS inspection), multi-threaded architecture (Load Balancer + Fast Path threads), traffic blocking and filtering engine, and PCAP file processing and analysis.",
+        description: "A high-performance Deep Packet Inspection engine designed to analyze, classify, and filter network traffic at packet level.",
         tech: ["C++", "OOP", "Networking", "Multithreading", "PCAP processing"],
-        github: "https://github.com/yourusername/flowguard",
-        live: "https://flowguard.demo.com",
-        video: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-        thumbnail: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=240&fit=crop",
-        impact: "Designed for high-throughput packet processing systems, parallel architecture improves performance vs single-threaded design, enables real-time traffic classification and filtering, demonstrates strong understanding of low-level systems + networking"
+        github: "https://github.com/astha1504/flowguard-dpi-engine",
+        live: null,
+        thumbnail: "/flowguard.png",
+        screenshots: [
+          "/Screenshots/Screenshot 2025-07-14 002834.png",
+        ],
+        status: "development",
+        statusLabel: "In Development",
+        impact: "Designed for high-throughput packet processing systems."
       },
       {
         id: 8,
         title: "Environment Club Website",
+        category: "mern",
         shortDesc: "Community-driven environmental awareness platform",
-        description: "A community-driven website designed to promote environmental awareness, sustainability, and youth engagement. Features responsive informational website, event and activity showcase, awareness-based content sections, and simple and accessible UI design.",
+        description: "A community-driven website designed to promote environmental awareness, sustainability, and youth engagement.",
         tech: ["HTML", "CSS", "JavaScript"],
-        github: "https://github.com/yourusername/environment-club",
-        live: "https://environmentclub.demo.com",
-        video: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-        thumbnail: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&h=240&fit=crop",
-        impact: "Improves awareness through structured digital content, lightweight static site optimized for fast loading, easy to scale for community updates"
+        github: "https://github.com/astha1504/Environment-Club",
+        live: "https://allenhouse.ac.in/jivita/index.html",
+        thumbnail: "/env.png",
+        screenshots: [
+          "/image.png",
+        ],
+        status: "hosted",
+        statusLabel: "Live",
+        impact: "Improves awareness through structured digital content."
       }
     ]
-  };
+  }), []);
+
+  // Handle image error - replace with placeholder
+  const handleImageError = useCallback((projectId, imageType) => {
+    setImageErrors(prev => ({ ...prev, [`${projectId}-${imageType}`]: true }));
+  }, []);
+
+  // Get image source with fallback
+  const getImageSrc = useCallback((project, type = 'thumbnail') => {
+    const key = `${project.id}-${type}`;
+    if (imageErrors[key]) {
+      return generatePlaceholder(project.title, project.category);
+    }
+    return type === 'thumbnail' ? project.thumbnail : project.screenshots?.[0];
+  }, [imageErrors]);
+
+  // FIXED: Intersection Observer - Force all cards to be visible immediately
+  useEffect(() => {
+    // Force all cards to be visible right away
+    const allProjectIds = Object.values(projects).flat().map(p => p.id);
+    const initialVisible = {};
+    allProjectIds.forEach(id => {
+      initialVisible[id] = true;
+    });
+    setVisibleCards(initialVisible);
+
+    // Optional: Set up observer for any additional animation needs (doesn't affect visibility)
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const id = entry.target.dataset.id;
+          if (entry.isIntersecting && !hasAnimated.current[id]) {
+            hasAnimated.current[id] = true;
+            // Keep cards visible - don't modify visibility state
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -20px 0px" }
+    );
+
+    // Small delay to ensure DOM is ready
+    setTimeout(() => {
+      Object.values(cardRefs.current).forEach(ref => {
+        if (ref) observerRef.current?.observe(ref);
+      });
+    }, 100);
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [projects]);
 
   const openModal = useCallback((project) => {
-    setThumbnailRotate(prev => ({ ...prev, [project.id]: true }));
-    setTimeout(() => {
-      setThumbnailRotate(prev => ({ ...prev, [project.id]: false }));
-    }, 500);
     setSelectedProject(project);
     setModalOpen(true);
     document.body.style.overflow = "hidden";
@@ -127,15 +241,54 @@ export default function AllProjects({ goBack }) {
     setModalOpen(false);
     setTimeout(() => {
       setSelectedProject(null);
-    }, 400);
+    }, 300);
     document.body.style.overflow = "auto";
   }, []);
+
+  const openLightbox = useCallback((images, index) => {
+    setLightboxImages(images);
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+    document.body.style.overflow = "hidden";
+  }, []);
+
+  const closeLightbox = useCallback(() => {
+    setLightboxOpen(false);
+    document.body.style.overflow = "auto";
+  }, []);
+
+  const nextImage = useCallback(() => {
+    setLightboxIndex(prev => (prev + 1) % lightboxImages.length);
+  }, [lightboxImages.length]);
+
+  const prevImage = useCallback(() => {
+    setLightboxIndex(prev => (prev - 1 + lightboxImages.length) % lightboxImages.length);
+  }, [lightboxImages.length]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (!lightboxOpen) return;
+      if (e.key === "Escape") closeLightbox();
+      if (e.key === "ArrowRight") nextImage();
+      if (e.key === "ArrowLeft") prevImage();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [lightboxOpen, closeLightbox, nextImage, prevImage]);
 
   useEffect(() => {
     return () => {
       document.body.style.overflow = "auto";
     };
   }, []);
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case "hosted": return <FaCheckCircle />;
+      case "inprogress": return <FaClock />;
+      default: return <FaCode />;
+    }
+  };
 
   const CategorySection = ({ title, items, icon, colorClass }) => (
     <div className="ap-category-section">
@@ -148,27 +301,40 @@ export default function AllProjects({ goBack }) {
         <span className="ap-category-count">{items.length} projects</span>
       </div>
       <div className="ap-projects-grid">
-        {items.map((project) => (
+        {items.map((project, index) => (
           <div
             key={project.id}
+            data-id={project.id}
+            ref={el => cardRefs.current[project.id] = el}
             onClick={() => openModal(project)}
-            className="ap-project-card"
+            className={`ap-project-card ${visibleCards[project.id] ? 'card-visible' : ''}`}
+            style={{ transitionDelay: `${index * 0.05}s` }}
           >
             <div className="ap-project-image-wrapper">
               <img
-                src={project.thumbnail}
+                src={getImageSrc(project, 'thumbnail')}
                 alt={project.title}
-                className={`ap-project-image ${thumbnailRotate[project.id] ? 'animate-spin-once' : ''}`}
+                className="ap-project-image"
                 loading="lazy"
+                onError={() => handleImageError(project.id, 'thumbnail')}
               />
               <div className="ap-project-overlay"></div>
-              <div className="ap-project-play-button">
-                <div className="ap-play-icon-wrapper">
-                  <FaPlay size={12} className="ap-play-icon" />
-                </div>
-                <span className="ap-watch-demo-text">Watch Demo</span>
+
+              <div className={`ap-status-badge ap-status-${project.status}`}>
+                {getStatusIcon(project.status)}
+                <span>{project.statusLabel}</span>
               </div>
+
+              <div className="ap-project-view-cta">
+                <div className="ap-view-icon-wrapper">
+                  <FaEye size={13} className="ap-view-icon" />
+                </div>
+                <span className="ap-view-details-text">View Details</span>
+              </div>
+
+              <div className="ap-shimmer"></div>
             </div>
+
             <div className="ap-project-content">
               <h3 className="ap-project-title">{project.title}</h3>
               <p className="ap-project-short-desc">{project.shortDesc}</p>
@@ -191,21 +357,26 @@ export default function AllProjects({ goBack }) {
     </div>
   );
 
+  // Count stats
+  const totalLive = Object.values(projects).flat().filter(p => p.status === 'hosted').length;
+  const totalInProgress = Object.values(projects).flat().filter(p => p.status === 'inprogress').length;
+  const totalDev = Object.values(projects).flat().filter(p => p.status === 'development').length;
+
   return (
     <div className="all-projects-container">
-      {/* Background Pattern */}
-      <div className="background-pattern"></div>
+      <div className="background-pattern">
+        <div className="bg-orb bg-orb-1"></div>
+        <div className="bg-orb bg-orb-2"></div>
+        <div className="bg-orb bg-orb-3"></div>
+      </div>
 
-      {/* Main Content */}
       <div className="main-content">
         <div className="content-wrapper">
-          {/* Back Button */}
           <button onClick={goBack} className="back-button">
             <FaArrowLeft className="back-button-icon" />
             <span>Back to Home</span>
           </button>
 
-          {/* Header */}
           <div className="ap-header-section">
             <div className="ap-header-badge">
               <span className="ap-header-badge-text">MY PORTFOLIO</span>
@@ -216,9 +387,19 @@ export default function AllProjects({ goBack }) {
             <p className="ap-header-subtitle">
               Exploring the intersection of Artificial Intelligence, Machine Learning, and Full-Stack Development
             </p>
+            <div className="ap-stats-row">
+              <div className="ap-stat-pill ap-stat-hosted">
+                <FaCheckCircle /> <span>{totalLive} Live</span>
+              </div>
+              <div className="ap-stat-pill ap-stat-inprogress">
+                <FaClock /> <span>{totalInProgress} In Progress</span>
+              </div>
+              <div className="ap-stat-pill ap-stat-dev">
+                <FaCode /> <span>{totalDev} In Development</span>
+              </div>
+            </div>
           </div>
 
-          {/* AI Section */}
           <CategorySection
             title="Artificial Intelligence"
             items={projects.ai}
@@ -226,7 +407,6 @@ export default function AllProjects({ goBack }) {
             colorClass="bg-purple"
           />
 
-          {/* ML Section */}
           <CategorySection
             title="Machine Learning"
             items={projects.ml}
@@ -234,7 +414,6 @@ export default function AllProjects({ goBack }) {
             colorClass="bg-blue"
           />
 
-          {/* Systems & Web Section */}
           <CategorySection
             title="Systems & Web"
             items={projects.mern}
@@ -248,33 +427,59 @@ export default function AllProjects({ goBack }) {
       {modalOpen && selectedProject && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-container" onClick={(e) => e.stopPropagation()}>
-            {/* Modal Header */}
-            <div className="modal-header">
-              <div className="modal-header-text">
-                <h2 className="ap-modal-title">{selectedProject.title}</h2>
-                <p className="ap-modal-subtitle">{selectedProject.shortDesc}</p>
+            <div className="modal-hero-image-wrapper">
+              <img
+                src={getImageSrc(selectedProject, 'thumbnail')}
+                alt={selectedProject.title}
+                className="modal-hero-image"
+                onError={() => handleImageError(selectedProject.id, 'modal')}
+              />
+              <div className="modal-hero-gradient"></div>
+              <div className="modal-hero-content">
+                <div className={`modal-hero-status ap-status-${selectedProject.status}`}>
+                  {getStatusIcon(selectedProject.status)}
+                  <span>{selectedProject.statusLabel}</span>
+                </div>
+                <h2 className="modal-hero-title">{selectedProject.title}</h2>
+                <p className="modal-hero-subtitle">{selectedProject.shortDesc}</p>
               </div>
               <button onClick={closeModal} className="modal-close-btn">
-                <FaTimes size={20} />
+                <FaTimes size={18} />
               </button>
             </div>
 
-            {/* Modal Body */}
             <div className="modal-body">
-              {/* Video Section */}
-              <div className="modal-video">
-                <div className="video-wrapper">
-                  <iframe
-                    src={selectedProject.video}
-                    title={`${selectedProject.title} demo video`}
-                    className="video-iframe"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
+              {/* Screenshots Gallery */}
+              {selectedProject.screenshots && selectedProject.screenshots.length > 0 && (
+                <div className="modal-section ap-screenshots-section">
+                  <h3 className="ap-section-title">
+                    <span className="ap-section-indicator"></span>
+                    Project Screenshots
+                  </h3>
+                  <div className="ap-screenshot-gallery">
+                    {selectedProject.screenshots.map((screenshot, idx) => (
+                      <div 
+                        key={idx} 
+                        className="ap-screenshot-thumb"
+                        onClick={() => openLightbox(selectedProject.screenshots, idx)}
+                      >
+                        <img 
+                          src={screenshot} 
+                          alt={`Screenshot ${idx + 1}`}
+                          loading="lazy"
+                          onError={(e) => {
+                            e.target.src = generatePlaceholder(selectedProject.title, selectedProject.category);
+                          }}
+                        />
+                        <div className="ap-screenshot-thumb-overlay">
+                          <FaEye className="ap-screenshot-eye" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* Description Section */}
               <div className="modal-section">
                 <h3 className="ap-section-title">
                   <span className="ap-section-indicator"></span>
@@ -283,7 +488,6 @@ export default function AllProjects({ goBack }) {
                 <p className="ap-section-text">{selectedProject.description}</p>
               </div>
 
-              {/* Impact Section */}
               {selectedProject.impact && (
                 <div className="modal-section ap-impact-section">
                   <h3 className="ap-section-title">
@@ -294,7 +498,6 @@ export default function AllProjects({ goBack }) {
                 </div>
               )}
 
-              {/* Tech Stack Section */}
               <div className="modal-section">
                 <h3 className="ap-section-title">
                   <span className="ap-section-indicator"></span>
@@ -309,7 +512,6 @@ export default function AllProjects({ goBack }) {
                 </div>
               </div>
 
-              {/* Links Section */}
               <div className="modal-links">
                 <a
                   href={selectedProject.github}
@@ -320,17 +522,51 @@ export default function AllProjects({ goBack }) {
                   <FaGithub size={16} />
                   GitHub Repository
                 </a>
-                <a
-                  href={selectedProject.live}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-live"
-                >
-                  <FaExternalLinkAlt size={14} />
-                  Live Demo
-                </a>
+                {selectedProject.live ? (
+                  <a
+                    href={selectedProject.live}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-live"
+                  >
+                    <FaExternalLinkAlt size={14} />
+                    Live Demo
+                  </a>
+                ) : (
+                  <span className={`btn-live-disabled btn-disabled-${selectedProject.status}`}>
+                    {selectedProject.status === "inprogress" ? <FaClock size={14} /> : <FaCode size={14} />}
+                    {selectedProject.status === "inprogress" ? "In Progress" : "Coming Soon"}
+                  </span>
+                )}
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Lightbox */}
+      {lightboxOpen && lightboxImages.length > 0 && (
+        <div className="ap-lightbox-overlay" onClick={closeLightbox}>
+          <button className="ap-lightbox-close" onClick={closeLightbox}>
+            <FaTimes size={20} />
+          </button>
+          <button className="ap-lightbox-nav ap-lightbox-prev" onClick={(e) => { e.stopPropagation(); prevImage(); }}>
+            <FaChevronLeft size={20} />
+          </button>
+          <button className="ap-lightbox-nav ap-lightbox-next" onClick={(e) => { e.stopPropagation(); nextImage(); }}>
+            <FaChevronRight size={20} />
+          </button>
+          <div className="ap-lightbox-content" onClick={(e) => e.stopPropagation()}>
+            <img 
+              src={lightboxImages[lightboxIndex]} 
+              alt={`Screenshot ${lightboxIndex + 1}`}
+              onError={(e) => {
+                e.target.src = generatePlaceholder("Screenshot", "ai");
+              }}
+            />
+          </div>
+          <div className="ap-lightbox-counter">
+            {lightboxIndex + 1} / {lightboxImages.length}
           </div>
         </div>
       )}
